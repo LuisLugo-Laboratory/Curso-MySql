@@ -1,1 +1,1 @@
-###Queries gemerados en el curso de MySql
+###Queries básicos generados en el curso de MySql :)
