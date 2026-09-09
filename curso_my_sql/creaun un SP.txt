@@ -1,0 +1,35 @@
+DELIMITER $$
+create PROCEDURE insert_serie ( mytitulo varchar(255),  mydescripcion text,  myyear int,  mygenero varchar(255) )
+
+BEGIN
+	INSERT into series (titulo, descripcion, año_lanzamiento, genero) VALUES (mytitulo, mydescripcion, myyear, mygenero);
+ END;$$
+DELIMITER ;    
+
+
+--
+DELIMITER $$
+CREATE PROCEDURE anular_movimiento(id_movimiento Bigint)
+    BEGIN
+        DECLARE sp_idCuenta Bigint;
+        DECLARE sp_saldoActual DECIMAL(10,2);
+        DECLARE sp_movimiento int;
+        DECLARE sp_montoMovimiento DECIMAL(10,2);
+        DECLARE sp_nuevoSaldo DECIMAL(10,2);
+
+        SELECT cuentaid,movimiento,monto INTO sp_idCuenta,sp_movimiento,sp_montoMovimiento FROM movimiento WHERE idmovimiento = id_movimiento;
+        SELECT saldo INTO sp_saldoActual FROM cuenta WHERE idcuenta = sp_idCuenta;
+
+        IF sp_movimiento = 1 OR sp_movimiento = 2 THEN
+            IF sp_movimiento = 1 THEN
+                SET sp_nuevoSaldo = sp_saldoActual + sp_montoMovimiento;
+            ELSE
+                SET sp_nuevoSaldo = sp_saldoActual - sp_montoMovimiento;
+            END IF;
+            UPDATE movimiento SET status = 0 WHERE idmovimiento = id_movimiento;
+            UPDATE cuenta SET saldo = sp_nuevoSaldo WHERE idcuenta = sp_idCuenta;
+            SELECT idcuenta,saldo FROM cuenta WHERE idcuenta = sp_idCuenta;
+        END IF;
+        
+    END;$$
+DELIMITER ;

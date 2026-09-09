@@ -1,0 +1,12 @@
+DELIMITER $$
+
+CREATE TRIGGER `nueva_serie` AFTER INSERT ON `series` 
+FOR EACH ROW 
+BEGIN 
+	SET @lastID = (SELECT serie_id FROM series ORDER BY serie_id DESC LIMIT 1); 
+
+	INSERT INTO logs_series(serie_id, fecha_registro) VALUES ( @lastID, NOW()); 
+
+END;$$
+
+DELIMITER ;
